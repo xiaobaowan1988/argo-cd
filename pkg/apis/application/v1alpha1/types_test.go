@@ -4755,6 +4755,22 @@ func TestSourceAllowsConcurrentProcessing_KustomizeParams(t *testing.T) {
 
 		assert.False(t, src.AllowsConcurrentProcessing())
 	})
+
+	// `kustomize edit set replicas` rewrites kustomization.yaml in the shared checkout, so Replicas must
+	// prevent concurrent processing just like Images, Patches etc. do.
+	t.Run("Has Replicas", func(t *testing.T) {
+		src := ApplicationSource{Path: ".", Kustomize: &ApplicationSourceKustomize{
+			Replicas: KustomizeReplicas{{Name: "my-deployment", Count: intstr.FromInt32(2)}},
+		}}
+
+		assert.False(t, src.AllowsConcurrentProcessing())
+	})
+
+	t.Run("No params allows concurrent processing", func(t *testing.T) {
+		src := ApplicationSource{Path: ".", Kustomize: &ApplicationSourceKustomize{}}
+
+		assert.True(t, src.AllowsConcurrentProcessing())
+	})
 }
 
 func TestUnSetCascadedDeletion(t *testing.T) {

@@ -841,6 +841,7 @@ type KustomizeGvk struct {
 // AllowsConcurrentProcessing returns true if multiple processes can run Kustomize builds on the same source at the same time
 func (k *ApplicationSourceKustomize) AllowsConcurrentProcessing() bool {
 	return len(k.Images) == 0 &&
+		len(k.Replicas) == 0 &&
 		len(k.CommonLabels) == 0 &&
 		len(k.CommonAnnotations) == 0 &&
 		k.NamePrefix == "" &&
